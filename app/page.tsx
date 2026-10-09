@@ -1,59 +1,300 @@
 "use client";
 
-import {useState, type FormEvent, type ReactNode} from "react";
-import {motion,useReducedMotion,useScroll,useSpring,AnimatePresence} from "framer-motion";
-import {ArrowDownRight,ArrowUpRight,Check,Copy,Instagram,Mail,Menu,X,PenLine,Video,Users,Landmark,Send,Phone,ChevronDown,ArrowRight} from "lucide-react";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { motion, useScroll, useSpring, useReducedMotion } from "framer-motion";
+import CursorAvatar from "./components/cursor-avatar";
+import {
+  ArrowDownRight, ArrowUpRight, Check, ChevronDown, Copy,
+  Linkedin, Mail, Menu, MoveUpRight, PenLine, Play, Send,
+  Video, X, Users,
+} from "lucide-react";
 
-const EMAIL="zanaibfamiya@gmail.com";
-const INSTA="https://www.instagram.com/hehe_ussss/";
-const WHATSAPP="https://wa.me/923319743275";
-const categories=["All work","Writing","Creative","Leadership","Finance"] as const;
-type Category=typeof categories[number];
-type Project={category:Exclude<Category,"All work">;number:string;eyebrow:string;name:string;role:string;period:string;metric:string;metricLabel:string;details:string[]};
-const projects:Project[]=[
- {category:"Writing",number:"01",eyebrow:"FREELANCE / SEO SPECIALIST",name:"Words engineered\nto get found.",role:"Self-employed",period:"2024 — Present",metric:"1,000+",metricLabel:"SEO ARTICLES · 10+ INDUSTRIES",details:["Managed concurrent content pipelines supporting organic search traffic growth.","Applied semantic keyword strategies and tailored tone for technical and niche brands."]},
- {category:"Creative",number:"02",eyebrow:"INSTAGRAM / VIDEO EDITING",name:"Make them stop.\nMake them watch.",role:"Content Creator — @hehe_ussss",period:"2025 — Present",metric:"360°",metricLabel:"END-TO-END VIDEO PRODUCTION",details:["Concepted, shot and edited Instagram Reels and short-form video assets.","Used trending formats, pacing and retention-focused editing to maximize reach and channel growth."]},
- {category:"Leadership",number:"03",eyebrow:"IBF SOCIETY / LEADERSHIP",name:"Lead with purpose.\nDeliver with people.",role:"First Female Vice President — BZU",period:"Bahauddin Zakariya University",metric:"20+",metricLabel:"TEAM MEMBERS · 5+ MAJOR EVENTS",details:["Elected to lead student society operations while maintaining a 3.67 CGPA.","Led strategic communication, public speaking and university event logistics."]},
- {category:"Finance",number:"04",eyebrow:"FINANCE / BANKING INTERNSHIPS",name:"Precision behind\nthe numbers.",role:"United Bank Limited & Lahore Gymkhana",period:"Internships",metric:"4+",metricLabel:"BANKING DEPARTMENTS · AUDIT REVIEW",details:["Conducted internal audit reviews and compliance checks at UBL.","Managed financial record-keeping, ledgers and reconciliation at Lahore Gymkhana."]}
-];
-const services=[
- {number:"01",name:"SEO Content &\nLong-form Writing",summary:"Crafting search-optimized articles, long-form blogs and website copy tailored to brand voice, search intent and semantic SEO.",tags:["SEO ARTICLES","WEB COPY","CONTENT STRATEGY"],icon:PenLine},
- {number:"02",name:"Video Editing &\nShort-form Content",summary:"End-to-end Instagram Reels production — scripting, shooting and editing with an eye for retention and authentic connection.",tags:["REELS","VIDEO EDITING","SOCIAL CONTENT"],icon:Video},
- {number:"03",name:"Strategic Leadership\n& Event Management",summary:"Leading cross-functional teams, executing major university-wide events, and managing operational and financial workflows.",tags:["LEADERSHIP","EVENTS","OPERATIONS"],icon:Users}
-];
-const facts=[["BASED IN","Multan, Pakistan"],["EDUCATION","BBA Banking & Finance · BZU"],["CGPA","3.67 / 4.00"],["CURRENT ROLE","Content Creator & Vice President"],["LANGUAGES","Urdu (Native) · English (Professional) · Chinese & Arabic (Conversational)"],["PHONE","+92 331 974 3275"]];
+const EMAIL = "zanaibfamiya@gmail.com";
+const LINKEDIN = "https://www.linkedin.com/in/famiya-zanaib-03156b366/";
 
-function Reveal({children,className="",delay=0}:{children:ReactNode;className?:string;delay?:number}) {
- const reduced=useReducedMotion();
- return <motion.div className={className} initial={reduced?false:{opacity:0,y:26}} whileInView={{opacity:1,y:0}} viewport={{once:true,amount:.12}} transition={{duration:.65,delay,ease:[.22,1,.36,1]}}>{children}</motion.div>;
+type Category = "Writing" | "Creative" | "Leadership" | "Finance";
+type Project = {
+  number: string;
+  category: Category;
+  eyebrow: string;
+  name: string;
+  period: string;
+  featured: string;
+  stat: string;
+  statLabel: string;
+  lines: string[];
+};
+
+const projects: Project[] = [
+  {
+    number: "01", category: "Writing", eyebrow: "FREELANCE / SEO STRATEGY",
+    name: "Words engineered\nto get found.", period: "2024 — PRESENT",
+    featured: "Freelance Content & SEO Specialist",
+    stat: "1,000+", statLabel: "SEO ARTICLES · 10+ INDUSTRIES",
+    lines: ["Managed concurrent content pipelines supporting organic search visibility.", "Applied semantic keyword strategies and adapted tone for technical and niche brands."],
+  },
+  {
+    number: "02", category: "Creative", eyebrow: "SOCIAL / VIDEO PRODUCTION",
+    name: "Make them stop.\nMake them watch.", period: "2025 — PRESENT",
+    featured: "Short-form Content Creator & Video Editor",
+    stat: "360°", statLabel: "END-TO-END VIDEO PRODUCTION",
+    lines: ["Concepted, shot and edited Reels and short-form assets from start to finish.", "Used trends, pacing and retention-first edits to help content reach audiences."],
+  },
+  {
+    number: "03", category: "Leadership", eyebrow: "LEADERSHIP / EVENT STRATEGY",
+    name: "Lead with purpose.\nDeliver with people.", period: "BAHAUDDIN ZAKARIYA UNIVERSITY",
+    featured: "First Female Vice President — IBF Society",
+    stat: "20+", statLabel: "TEAM MEMBERS · 5+ EVENTS",
+    lines: ["Elected to lead student society operations while maintaining a 3.67 CGPA.", "Coordinated communications, public speaking, logistics and major university events."],
+  },
+  {
+    number: "04", category: "Finance", eyebrow: "BANKING / FINANCIAL OPERATIONS",
+    name: "Precision behind\nthe numbers.", period: "UBL + LAHORE GYMKHANA",
+    featured: "Financial & Banking Internships",
+    stat: "4+", statLabel: "BANKING DEPARTMENTS",
+    lines: ["Supported internal audit reviews and compliance checks at United Bank Limited.", "Worked on financial ledgers, record keeping and reconciliation at Lahore Gymkhana."],
+  },
+];
+
+const services = [
+  {
+    number: "01", icon: PenLine, title: "Content Writing\n& SEO",
+    text: "Search-optimized articles, long-form blogs and website copy — built around brand voice, intent and semantic SEO.",
+    tags: ["SEO ARTICLES", "WEB COPY", "CONTENT STRATEGY"],
+  },
+  {
+    number: "02", icon: Video, title: "Video Editing\n& Short-form",
+    text: "From concept and script to editing and retention. Reels designed to stop the scroll and tell a memorable story.",
+    tags: ["REELS", "VIDEO EDITING", "SOCIAL CONTENT"],
+  },
+  {
+    number: "03", icon: Users, title: "Leadership\n& Events",
+    text: "Bringing teams together, executing university-scale events and making ambitious ideas operationally real.",
+    tags: ["TEAM LEADERSHIP", "EVENTS", "OPERATIONS"],
+  },
+];
+
+const filters = ["All work", "Writing", "Creative", "Leadership", "Finance"] as const;
+type Filter = (typeof filters)[number];
+
+function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
+  const reduced = useReducedMotion();
+  return (
+    <motion.div
+      initial={reduced ? false : { opacity: 0, y: 26 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
-function Marker({number,label,right}:{number:string;label:string;right?:string}){
- return <div className="flex items-center justify-between gap-3 border-t border-line py-6"><p className="eyebrow text-fog"><span className="mr-4 text-accent">/{number}</span>{label}</p>{right&&<span className="hidden text-[11px] tracking-widest text-fog sm:block">{right}</span>}</div>;
+
+function SectionTop({ number, label, right }: { number: string; label: string; right?: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-t border-line py-5 md:py-6">
+      <p className="eyebrow text-fog"><span className="mr-4 text-accent">/{number}</span>{label}</p>
+      {right && <p className="hidden text-[11px] tracking-[.12em] text-fog sm:block">{right}</p>}
+    </div>
+  );
 }
-function Visual({category}:{category:Project["category"]}){
- if(category==="Writing") return <div className="decor-grid relative flex min-h-56 flex-col justify-between overflow-hidden rounded-xl border border-[#353b2a] bg-[#1b2515] p-7 md:min-h-64"><div className="eyebrow relative text-accent">SEARCH. WRITE. RANK.</div><div className="relative text-[clamp(58px,8vw,105px)] font-black leading-[.8] tracking-[-.09em]">WORDS<br/><span className="text-accent">WORK.</span></div><div className="relative flex justify-between border-t border-white/20 pt-4 text-[10px] tracking-widest text-white/50"><span>CONTENT WITH PURPOSE</span><span>01 / SEO</span></div></div>;
- if(category==="Creative") return <div className="decor-slash relative flex min-h-56 flex-col items-center justify-center overflow-hidden rounded-xl border border-[#4c2f3c] bg-[#271722] p-8 md:min-h-64"><div className="absolute -left-16 -top-24 h-80 w-80 rounded-full bg-rose-400/20 blur-3xl"/><div className="relative mb-5 flex h-24 w-24 items-center justify-center rounded-full border border-[#ffc7ce]/40 bg-[#ffc7ce]/10"><Video size={38} className="text-[#ffc7ce]"/></div><div className="relative text-center text-4xl font-black leading-[.95] tracking-[-.07em] text-[#ffd7de]">THE SCROLL<br/>STOPS HERE.</div><span className="absolute bottom-5 text-[10px] tracking-widest text-[#ffc7ce]/60">@HEHE_USSSS</span></div>;
- if(category==="Leadership") return <div className="decor-slash relative flex min-h-56 flex-col justify-end overflow-hidden rounded-xl border border-[#333e56] bg-[#192438] p-8 md:min-h-64"><span className="absolute -right-2 -top-16 text-[250px] font-black leading-none tracking-[-.13em] text-blue-200/[.09]">20</span><span className="eyebrow relative mb-5 text-[#aec7ff]">PEOPLE. PURPOSE. PROGRESS.</span><span className="relative text-6xl font-black leading-[.88] tracking-[-.08em]">LEAD<br/><span className="text-[#9bb5ff]">FORWARD.</span></span><span className="absolute bottom-6 right-6 rounded-full border border-blue-300/40 px-3 py-1 text-xs text-blue-200">VP / IBF</span></div>;
- return <div className="decor-grid relative flex min-h-56 flex-col justify-between overflow-hidden rounded-xl border border-[#49402c] bg-[#292319] p-7 md:min-h-64"><div className="eyebrow text-[#e8cd86]">ANALYZE / RECONCILE</div><div className="flex h-24 items-end gap-2">{[30,48,39,76,57,88,69,100,78].map((h,i)=><div key={i} className="w-full rounded-t-sm bg-[#e8cd86]" style={{height:h+"%",opacity:.28+i*.07}}/>)}</div><div className="flex items-end justify-between border-t border-white/20 pt-4 text-4xl font-black leading-[.95] tracking-[-.07em] text-[#fff1c5]">DETAIL IS<br/>EVERYTHING.<ArrowUpRight className="text-[#e8cd86]"/></div></div>;
+
+function ProjectVisual({ project }: { project: Project }) {
+  if (project.category === "Writing") return (
+    <div className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl border border-[#35372d] bg-[#1a2015] p-6 md:min-h-[270px] md:p-8">
+      <div className="pointer-events-none absolute inset-0 grid-texture opacity-50" />
+      <div className="relative flex items-center justify-between"><span className="eyebrow text-[#d7ff68]">SEARCH. WRITE. RANK.</span><span className="h-3 w-3 rounded-full bg-accent" /></div>
+      <div className="relative mt-12"><div className="text-[clamp(46px,7vw,96px)] font-black leading-[.77] tracking-[-.085em] text-white">WORDS<br/><span className="text-accent">WORK.</span></div></div>
+      <div className="relative mt-6 flex justify-between border-t border-white/20 pt-4 text-[10px] tracking-[.16em] text-white/50"><span>CONTENT WITH A PURPOSE</span><span>001 / SEO</span></div>
+    </div>
+  );
+  if (project.category === "Creative") return (
+    <div className="relative flex min-h-[220px] flex-col items-center justify-center overflow-hidden rounded-xl border border-[#483339] bg-[#241319] p-7 md:min-h-[270px]">
+      <div className="absolute -left-12 -top-24 h-80 w-80 rounded-full bg-[#f29b81]/20 blur-[55px]" />
+      <div className="absolute -bottom-48 -right-20 h-96 w-96 rounded-full bg-[#bd4065]/20 blur-[45px]" />
+      <div className="absolute inset-0 diagonal-lines opacity-25" />
+      <motion.div whileHover={{ scale: 1.07, rotate: 8 }} className="relative flex h-24 w-24 items-center justify-center rounded-full border border-[#ffe1d4]/40 bg-[#ffc4ad]/10 backdrop-blur md:h-28 md:w-28">
+        <Play size={33} fill="#ffc4ad" stroke="#ffc4ad" className="ml-2" />
+      </motion.div>
+      <div className="relative mt-7 text-center text-[30px] font-black leading-none tracking-[-.06em] text-[#ffe1d4] md:text-[40px]">THE SCROLL<br/>STOPS HERE.</div>
+      <div className="absolute bottom-5 left-6 right-6 flex justify-between text-[10px] tracking-[.16em] text-[#ffe1d4]/60"><span>REELS / EDITING</span><span>VIDEO / SOCIAL</span></div>
+    </div>
+  );
+  if (project.category === "Leadership") return (
+    <div className="relative flex min-h-[220px] items-end overflow-hidden rounded-xl border border-[#32374b] bg-[#182034] p-7 md:min-h-[270px] md:p-8">
+      <div className="absolute right-0 top-0 h-full w-1/2 diagonal-lines opacity-40" />
+      <span className="absolute -right-4 -top-12 text-[230px] font-black leading-none tracking-[-.12em] text-[#b7c9ff]/[.09] md:text-[290px]">20</span>
+      <div className="relative"><div className="eyebrow mb-5 text-[#bbcbf9]">PEOPLE. PURPOSE. PROGRESS.</div><div className="text-5xl font-black leading-[.9] tracking-[-.07em] text-white md:text-6xl">LEAD<br/><span className="text-[#9bb5ff]">FORWARD.</span></div></div>
+      <span className="absolute bottom-7 right-7 rounded-full border border-[#96b1f5]/40 px-3 py-1 text-xs font-semibold text-[#bbcbf9]">VP / IBF</span>
+    </div>
+  );
+  return (
+    <div className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl border border-[#4b432e] bg-[#292418] p-7 md:min-h-[270px] md:p-8">
+      <div className="absolute inset-0 grid-texture opacity-50" />
+      <div className="relative flex justify-between"><span className="eyebrow text-[#f2d38d]">ANALYZE / RECONCILE</span><span className="eyebrow text-[#f2d38d]/70">04—08</span></div>
+      <div className="relative flex h-24 items-end gap-2 pb-1">
+        {[34, 53, 42, 72, 62, 84, 75, 100, 86, 112].map((height, index) => <div key={index} className="w-full rounded-t-[2px] bg-[#f2d38d]" style={{ height, opacity: .27 + index * .07 }} />)}
+      </div>
+      <div className="relative flex items-end justify-between gap-3 border-t border-white/20 pt-5"><span className="text-[28px] font-black leading-none tracking-[-.065em] text-[#fff2ce] md:text-4xl">DETAIL IS<br/>EVERYTHING.</span><ArrowUpRight className="shrink-0 text-[#f2d38d]" size={28} /></div>
+    </div>
+  );
 }
-function ProjectCard({project}:{project:Project}){
- return <Reveal><article className="card h-full p-3 md:p-4"><Visual category={project.category}/><div className="px-3 pb-4 pt-7 md:px-4"><div className="flex justify-between gap-3"><span className="eyebrow text-accent">{project.eyebrow}</span><span className="text-xs text-fog">{project.number} / 04</span></div><h3 className="mt-5 whitespace-pre-line text-[clamp(30px,3.6vw,42px)] font-bold leading-[1.03] tracking-[-.06em]">{project.name}</h3><p className="mt-3 text-sm leading-relaxed text-fog">{project.role} · {project.period}</p><div className="my-6 border-y border-line py-5"><strong className="block text-6xl font-black leading-none tracking-[-.09em]">{project.metric}</strong><span className="eyebrow mt-3 block text-fog">{project.metricLabel}</span></div><ul className="space-y-3">{project.details.map(line=><li key={line} className="flex gap-3 text-[13px] leading-relaxed text-[#b3b3b3]"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"/>{line}</li>)}</ul>{project.category==="Creative"&&<a href={INSTA} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline">View @hehe_ussss <ArrowUpRight size={16}/></a>}</div></article></Reveal>;
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <Reveal>
+      <article className="interactive-card flex h-full flex-col rounded-[22px] border border-line bg-[#111111] p-3 md:p-4">
+        <ProjectVisual project={project} />
+        <div className="flex flex-1 flex-col px-3 pb-4 pt-7 md:px-5 md:pt-8">
+          <div className="flex items-center justify-between gap-3"><span className="eyebrow text-accent">{project.eyebrow}</span><span className="text-xs text-fog">{project.number} / 04</span></div>
+          <h3 className="mt-5 whitespace-pre-line text-[clamp(27px,3vw,41px)] font-bold leading-[1.08] tracking-[-.065em]">{project.name}</h3>
+          <p className="mt-3 text-sm text-fog">{project.featured} <span className="mx-1 text-[#525252]">·</span> {project.period}</p>
+          <div className="mt-6 border-y border-line py-5"><div className="text-[51px] font-black leading-none tracking-[-.09em] text-white md:text-[59px]">{project.stat}</div><p className="eyebrow mt-3 text-fog">{project.statLabel}</p></div>
+          <ul className="mt-6 space-y-3 pb-1">
+            {project.lines.map((line) => <li key={line} className="flex gap-3 text-[13px] leading-[1.65] text-[#adadad]"><span className="mt-[9px] h-[5px] w-[5px] shrink-0 rounded-full bg-accent" />{line}</li>)}
+          </ul>
+          {project.category === "Creative" && <span className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-accent">Concept · Edit · Publish <ArrowUpRight size={16} /></span>}
+        </div>
+      </article>
+    </Reveal>
+  );
 }
-function ContactForm(){
- const[name,setName]=useState("");const[email,setEmail]=useState("");const[type,setType]=useState("");const[message,setMessage]=useState("");const[opened,setOpened]=useState(false);
- function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();const subject="Portfolio enquiry: "+type+" — "+name;const body="Hi Famiya,\n\n"+message+"\n\nProject type: "+type+"\nName: "+name+"\nReply to: "+email;setOpened(true);window.location.href="mailto:"+EMAIL+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);}
- return <form onSubmit={submit} className="space-y-5" aria-label="Project enquiry form"><div className="grid gap-5 sm:grid-cols-2"><div><label htmlFor="contactName" className="eyebrow mb-2 block text-[#bcbcbc]">YOUR NAME *</label><input id="contactName" className="input" placeholder="How should I call you?" autoComplete="name" maxLength={100} required value={name} onChange={e=>setName(e.target.value)}/></div><div><label htmlFor="contactEmail" className="eyebrow mb-2 block text-[#bcbcbc]">EMAIL ADDRESS *</label><input id="contactEmail" className="input" placeholder="you@company.com" type="email" autoComplete="email" maxLength={200} required value={email} onChange={e=>setEmail(e.target.value)}/></div></div><div><label htmlFor="contactType" className="eyebrow mb-2 block text-[#bcbcbc]">PROJECT TYPE *</label><div className="relative"><select id="contactType" className="input appearance-none" required value={type} onChange={e=>setType(e.target.value)}><option value="" disabled>Select what you have in mind</option>{["SEO Content & Writing","Video Editing & Reels","Content Strategy","Event & Leadership Collaboration","Something Else"].map(v=><option key={v}>{v}</option>)}</select><ChevronDown className="pointer-events-none absolute right-4 top-4 text-fog" size={20}/></div></div><div><label htmlFor="contactMessage" className="eyebrow mb-2 block text-[#bcbcbc]">TELL ME ABOUT IT *</label><textarea id="contactMessage" className="input min-h-40 resize-y" placeholder="The big idea, the tiny details, your wildest brief…" required minLength={10} maxLength={4000} value={message} onChange={e=>setMessage(e.target.value)}/></div><button className="group flex w-full items-center justify-between rounded-xl bg-accent px-6 py-5 text-sm font-black uppercase tracking-wide text-black transition-colors hover:bg-white" type="submit">Start the conversation <Send className="transition-transform group-hover:translate-x-1" size={18}/></button>{opened&&<p role="status" className="text-sm text-accent">Your email app should open with a prepared message. Press Send there to deliver it.</p>}<p className="text-xs leading-relaxed text-fog">This form opens your email application. It does not send or store your message on this site.</p></form>;
+
+function ContactForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [projectType, setProjectType] = useState("");
+  const [message, setMessage] = useState("");
+  const [opened, setOpened] = useState(false);
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const subject = `Portfolio enquiry: ${projectType} — ${name}`;
+    const body = `Hi Famiya,\n\n${message}\n\nProject type: ${projectType}\nName: ${name}\nReply to: ${email}`;
+    const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setOpened(true);
+    window.location.href = mailto;
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-5" aria-label="Project enquiry form">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div><label htmlFor="name" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#bcbcbc]">Your name *</label><input id="name" name="name" className="input-field" autoComplete="name" required maxLength={100} placeholder="How should I call you?" value={name} onChange={(e) => setName(e.target.value)} /></div>
+        <div><label htmlFor="email" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#bcbcbc]">Email address *</label><input id="email" name="email" type="email" className="input-field" autoComplete="email" required maxLength={200} placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+      </div>
+      <div><label htmlFor="projectType" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#bcbcbc]">Project type *</label><div className="relative"><select id="projectType" name="projectType" className="input-field appearance-none" required value={projectType} onChange={(e) => setProjectType(e.target.value)}><option value="" disabled>Select what you have in mind</option><option>SEO Content & Writing</option><option>Video Editing & Reels</option><option>Content Strategy</option><option>Event & Leadership Collaboration</option><option>Something Else</option></select><ChevronDown size={18} className="pointer-events-none absolute right-4 top-[18px] text-fog" /></div></div>
+      <div><label htmlFor="message" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#bcbcbc]">Tell me about it *</label><textarea id="message" name="message" className="input-field min-h-[150px] resize-y" required minLength={10} maxLength={4000} placeholder="The big idea, the tiny details, your wildest brief…" value={message} onChange={(e) => setMessage(e.target.value)} /></div>
+      <button type="submit" className="group flex w-full items-center justify-between rounded-xl bg-accent px-6 py-5 text-sm font-black uppercase tracking-[.1em] text-ink transition-colors hover:bg-white"><span>Start the conversation</span><Send size={19} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></button>
+      {opened && <p role="status" className="text-sm leading-relaxed text-accent">Your email app should open with a prepared message. Please press Send there to deliver your enquiry.</p>}
+      <p className="text-xs leading-relaxed text-[#888]">This form opens your email application; it doesn’t send or store your details on this website.</p>
+    </form>
+  );
 }
-export default function Home(){
- const[menuOpen,setMenuOpen]=useState(false);const[filter,setFilter]=useState<Category>("All work");const[copied,setCopied]=useState(false);const{scrollYProgress}=useScroll();const scaleX=useSpring(scrollYProgress,{stiffness:100,damping:30,restDelta:.001});const filtered=filter==="All work"?projects:projects.filter(p=>p.category===filter);
- async function copy(){try{await navigator.clipboard.writeText(EMAIL);setCopied(true);}catch{const area=document.createElement("textarea");area.value=EMAIL;area.style.position="fixed";document.body.appendChild(area);area.select();setCopied(document.execCommand("copy"));area.remove();}}
- return <div className="min-h-screen overflow-x-hidden bg-ink"><motion.div className="fixed left-0 right-0 top-0 z-[100] h-[3px] origin-left bg-accent" style={{scaleX}}/>
- <header className="sticky top-0 z-50 border-b border-line bg-[#0a0a0a]/95 backdrop-blur-xl"><nav className="wrap flex h-[76px] items-center justify-between" aria-label="Primary navigation"><a href="#top" onClick={()=>setMenuOpen(false)} className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-xl font-black tracking-[-.08em] text-black">FZ</span><span className="hidden text-xs font-black uppercase tracking-wider sm:block">Famiya Zanaib<span className="mt-1 block text-[10px] font-normal text-fog">CREATIVE PORTFOLIO / 2026</span></span></a><div className="hidden items-center gap-9 md:flex">{[["Work","#work"],["About","#about"],["Expertise","#services"]].map(([t,h])=><a key={h} href={h} className="text-[13px] font-semibold text-fog transition-colors hover:text-white">{t}</a>)}</div><a href="#contact" className="hidden items-center gap-2 rounded-full border border-[#464646] px-5 py-3 text-xs font-bold hover:border-accent hover:text-accent md:inline-flex">Let&apos;s talk <ArrowUpRight size={15}/></a><button className="rounded-lg border border-line p-2 md:hidden" type="button" onClick={()=>setMenuOpen(!menuOpen)} aria-label={menuOpen?"Close navigation":"Open navigation"} aria-expanded={menuOpen} aria-controls="mobile-nav">{menuOpen?<X/>:<Menu/>}</button></nav><AnimatePresence>{menuOpen&&<motion.div id="mobile-nav" initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} className="wrap overflow-hidden md:hidden">{[["Work","#work"],["About","#about"],["Expertise","#services"],["Contact","#contact"]].map(([t,h])=><a key={h} href={h} onClick={()=>setMenuOpen(false)} className="block border-t border-line py-4 text-sm font-semibold">{t}</a>)}</motion.div>}</AnimatePresence></header>
- <main id="top"><section className="relative overflow-hidden pb-20 pt-16 md:pb-28 md:pt-28"><div className="pointer-events-none absolute -right-56 -top-32 h-[700px] w-[700px] rounded-full bg-accent/10 blur-[150px]"/><div className="wrap relative"><Reveal className="mb-12 flex flex-wrap justify-between gap-4"><span className="eyebrow flex items-center gap-3 text-[#bcbcbc]"><span className="h-2 w-2 rounded-full bg-accent"/>THE WORK OF A CURIOUS MIND</span><span className="eyebrow text-[#777]">MULTAN, PAKISTAN · AVAILABLE WORLDWIDE</span></Reveal><motion.h1 initial={{opacity:0,y:36}} animate={{opacity:1,y:0}} transition={{duration:.9,ease:[.22,1,.36,1]}} className="hero-font text-[clamp(76px,15vw,224px)]"><span className="block">FAMIYA</span><span className="mt-3 block">ZANAIB<span className="text-accent">.</span></span></motion.h1><div className="mt-12 grid items-end gap-8 border-t border-line pt-9 md:grid-cols-2 md:gap-20"><Reveal><p className="eyebrow mb-4 text-accent">CONTENT WRITER · SEO STRATEGIST · EDITOR</p><p className="max-w-lg text-base leading-[1.85] text-[#bcbcbc]">Results-driven Content Writer, SEO Strategist and Short-form Video Editor with <strong className="text-white">3+ years of experience</strong> delivering <strong className="text-white">1,000+ high-quality articles</strong> and engaging digital content.</p></Reveal><Reveal delay={.1}><div className="md:ml-auto"><p className="mb-6 max-w-sm text-xl font-bold leading-snug tracking-tight">BBA Banking & Finance scholar (3.67 CGPA). First female VP of IBF Society. Digital creator.</p><div className="flex flex-wrap gap-3"><a href="#work" className="inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 text-xs font-black uppercase tracking-wider text-black transition-colors hover:bg-accent">Explore work <ArrowDownRight size={17}/></a><a href="#contact" className="inline-flex items-center gap-3 rounded-full border border-[#515151] px-6 py-4 text-xs font-black uppercase tracking-wider hover:border-white">Get in touch <ArrowUpRight size={17}/></a></div></div></Reveal></div><Reveal className="mt-20 grid grid-cols-2 gap-3 md:grid-cols-4">{[["1,000+","ARTICLES DELIVERED"],["3+","YEARS OF EXPERIENCE"],["3.67","BBA CGPA"],["20+","TEAM MEMBERS LED"]].map(([v,k])=><div key={k} className="rounded-2xl border border-line bg-panel px-5 py-7 md:px-7 md:py-9"><p className="text-[clamp(40px,5vw,68px)] font-black leading-none tracking-[-.09em]">{v}</p><p className="eyebrow mt-5 text-fog">{k}</p></div>)}</Reveal><div className="mt-10 flex items-center gap-2 text-xs text-[#888]"><ArrowDownRight size={18}/> SCROLL TO EXPLORE <span className="ml-auto text-accent">01 — 05</span></div></div></section>
- <div className="marquee border-y border-line bg-[#111] py-4" aria-hidden="true"><div className="marquee-track">{Array.from({length:4}).flatMap((_,i)=>["WORDS THAT WORK","✳","STORIES THAT STAY","✳","IDEAS INTO IMPACT","✳"].map((v,j)=><span key={i+"-"+j} className={"text-xs font-black tracking-widest "+(v==="✳"?"text-accent":"text-fog")}>{v}</span>))}</div></div>
- <section id="services" className="wrap pb-24 pt-24 md:pb-32 md:pt-32"><Marker number="01" label="WHAT I DO" right="THREE CORE PILLARS"/><Reveal className="mb-12 mt-9 flex flex-wrap items-end justify-between gap-6"><h2 className="section-font text-[clamp(52px,8vw,110px)]">SKILLS THAT<br/><span className="text-accent">DELIVER.</span></h2><p className="max-w-sm text-sm leading-[1.8] text-fog">From the right words to powerful visuals and strong teams. Strategy and execution, in one place.</p></Reveal><div className="grid gap-4 md:grid-cols-3">{services.map(s=><Reveal key={s.number}><article className="card flex h-full flex-col p-7 md:p-8"><div className="mb-14 flex items-center justify-between"><span className="eyebrow text-accent">/{s.number}</span><s.icon size={25} className="text-accent"/></div><h3 className="whitespace-pre-line text-3xl font-bold leading-tight tracking-[-.05em]">{s.name}</h3><p className="mt-6 flex-1 text-sm leading-[1.85] text-[#b6b6b6]">{s.summary}</p><div className="mt-9 flex flex-wrap gap-2">{s.tags.map(t=><span key={t} className="rounded-full border border-[#404040] px-3 py-2 text-[9px] font-bold tracking-wider text-[#a9a9a9]">{t}</span>)}</div></article></Reveal>)}</div></section>
- <section id="work" className="border-y border-line bg-[#0e0e0e] py-24 md:py-32"><div className="wrap"><Marker number="02" label="SELECTED WORK" right="2024 — PRESENT"/><Reveal className="mt-10 flex flex-wrap items-end justify-between gap-7"><h2 className="section-font text-[clamp(52px,8vw,110px)]">PROOF IN<br/><span className="text-accent">THE WORK.</span></h2><p className="max-w-xs text-sm leading-[1.85] text-fog">Each project and role has a story. These are the chapters that define the work.</p></Reveal><div className="mb-8 mt-12 flex flex-wrap gap-2" aria-label="Filter work">{categories.map(c=><button type="button" key={c} onClick={()=>setFilter(c)} aria-pressed={filter===c} className={"rounded-full border px-5 py-3 text-xs font-bold transition-colors "+(filter===c?"border-accent bg-accent text-black":"border-[#393939] text-fog hover:border-white hover:text-white")}>{c}</button>)}</div><motion.div layout className="grid items-stretch gap-5 md:grid-cols-2">{filtered.map(p=><ProjectCard key={p.number} project={p}/>)}</motion.div></div></section>
- <section id="about" className="wrap py-24 md:py-32"><Marker number="03" label="THE PERSON" right="A LITTLE MORE ABOUT ME"/><div className="mt-12 grid gap-14 md:grid-cols-[1fr_1fr] md:gap-20"><Reveal><h2 className="section-font text-[clamp(52px,6.5vw,96px)]">MORE THAN<br/><span className="text-accent">A BYLINE.</span></h2><p className="mt-9 max-w-lg text-base leading-[1.9] text-[#b4b4b4]">I&apos;m Famiya, a Multan-based writer and creator fascinated by what makes people pay attention. I combine meaningful words, engaging edits and a grounded understanding of business.</p><p className="mt-5 max-w-lg text-base leading-[1.9] text-[#b4b4b4]">As the first female Vice President of the IBF Society at Bahauddin Zakariya University, I&apos;ve learned that compelling communication and practical leadership go hand in hand.</p><div className="mt-9 flex flex-wrap gap-3"><span className="rounded-full border border-line px-4 py-3 text-xs text-fog">BBA Banking & Finance</span><span className="rounded-full border border-line px-4 py-3 text-xs text-fog">Creator · @hehe_ussss</span></div></Reveal><Reveal delay={.13}><div className="rounded-2xl border border-line bg-panel p-6 md:p-8"><div className="mb-6 flex items-center justify-between"><h3 className="text-xl font-bold">The fast facts.</h3><span className="eyebrow text-accent">AT A GLANCE</span></div>{facts.map(([label,value])=><div key={label} className="grid gap-2 border-t border-line py-5 sm:grid-cols-[130px_1fr] sm:gap-5"><span className="eyebrow text-fog">{label}</span><span className="text-sm font-semibold leading-relaxed text-white">{value}</span></div>)}<div className="border-t border-line pt-6"><a href={INSTA} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:underline">@hehe_ussss <ArrowUpRight size={16}/></a></div></div></Reveal></div></section>
- <section id="contact" className="border-t border-line bg-[#0f0f0f] py-24 md:py-32"><div className="wrap"><Marker number="04" label="GET IN TOUCH" right="YOUR NEXT GREAT IDEA STARTS HERE"/><div className="mt-12 grid gap-14 md:grid-cols-2 md:gap-20"><Reveal><p className="eyebrow mb-6 text-accent">HAVE A CONCEPT IN MIND?</p><h2 className="section-font text-[clamp(48px,6vw,88px)]">Give me any<br/>concept, and<br/>I&apos;ll turn it into<br/><span className="text-accent">content that<br/>converts.</span></h2><p className="mt-8 max-w-md text-[15px] leading-[1.9] text-fog">A half-formed idea or an ambitious launch — tell me what you&apos;re imagining. We&apos;ll start there.</p><div className="mt-9 flex flex-wrap items-center gap-3"><button type="button" onClick={copy} className="inline-flex items-center gap-2 rounded-full border border-[#4b4b4b] px-5 py-4 text-xs font-bold hover:border-accent hover:text-accent">{copied?<Check size={17}/>:<Copy size={17}/>} {copied?"Email copied!":"Copy email"}</button><a href={"mailto:"+EMAIL} className="inline-flex items-center gap-2 text-sm text-fog hover:text-white">{EMAIL} <ArrowUpRight size={15}/></a></div><div className="mt-12 flex gap-3">{[[INSTA,Instagram,"Instagram"],[WHATSAPP,Phone,"WhatsApp"],["mailto:"+EMAIL,Mail,"Email"]].map(([url,Icon,label])=>{const TargetIcon=Icon as typeof Instagram;return <a key={label as string} href={url as string} aria-label={label as string} target={label==="Email"?undefined:"_blank"} rel="noreferrer" className="flex h-12 w-12 items-center justify-center rounded-full border border-line text-fog hover:border-accent hover:text-accent"><TargetIcon size={19}/></a>;})}</div></Reveal><Reveal delay={.12}><div className="rounded-2xl border border-line bg-panel p-6 md:p-9"><div className="mb-8 flex items-center justify-between border-b border-line pb-6"><div><p className="eyebrow text-accent">PROJECT INQUIRY</p><h3 className="mt-3 text-2xl font-bold tracking-tight">Tell me your idea.</h3></div><ArrowUpRight size={28}/></div><ContactForm/></div></Reveal></div></div></section></main>
- <footer className="border-t border-line bg-[#101010]"><div className="wrap pt-12"><div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-12"><div><a href="#top" className="text-[clamp(43px,8vw,105px)] font-black leading-none tracking-[-.08em]">FAMIYA ZANAIB<span className="text-accent">.</span></a><p className="mt-4 text-xs tracking-wider text-fog">WORDS THAT WORK. STORIES THAT STAY.</p></div><a href="#top" className="rounded-full border border-line px-5 py-3 text-xs font-bold hover:border-accent">Back to top ↑</a></div><div className="flex flex-col justify-between gap-5 py-8 text-xs text-fog md:flex-row"><span>© {new Date().getFullYear()} Famiya Zanaib.</span><div className="flex flex-wrap gap-6"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a><a href={INSTA} target="_blank" rel="noreferrer">Instagram ↗</a><a href={WHATSAPP} target="_blank" rel="noreferrer">WhatsApp ↗</a></div><span>MULTAN, PK · WORLDWIDE ONLINE</span></div></div></footer></div>;
+
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<Filter>("All work");
+  const [copied, setCopied] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const filteredProjects = activeFilter === "All work" ? projects : projects.filter((p) => p.category === activeFilter);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+    } catch {
+      const node = document.createElement("textarea");
+      node.value = EMAIL; node.style.position = "fixed"; node.style.opacity = "0";
+      document.body.appendChild(node); node.select();
+      const success = document.execCommand("copy"); node.remove();
+      if (success) setCopied(true);
+    }
+  };
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-ink">
+      <motion.div className="fixed left-0 right-0 top-0 z-[100] h-[2px] origin-left bg-accent" style={{ scaleX }} />
+      <header className="sticky top-0 z-50 border-b border-line bg-[#0a0a0a]/95 backdrop-blur-xl">
+        <nav className="page-container flex h-[76px] items-center justify-between" aria-label="Primary navigation">
+          <a href="#top" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}><span className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-accent bg-accent text-[19px] font-black tracking-[-.07em] text-black">FZ</span><span className="hidden text-xs font-extrabold uppercase tracking-[.12em] text-white sm:block">Famiya Zanaib<span className="mt-1 block text-[9px] font-normal tracking-[.15em] text-[#8f8f8f]">CREATIVE PORTFOLIO / 2026</span></span></a>
+          <div className="hidden items-center gap-9 md:flex"><a className="text-[13px] font-semibold text-[#a3a3a3] transition-colors hover:text-white" href="#work">Work</a><a className="text-[13px] font-semibold text-[#a3a3a3] transition-colors hover:text-white" href="#about">About</a><a className="text-[13px] font-semibold text-[#a3a3a3] transition-colors hover:text-white" href="#services">Expertise</a></div>
+          <div className="hidden items-center gap-4 md:flex"><span className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[.1em] text-[#a2a2a2]"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />Available for projects</span><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="Famiya Zanaib on LinkedIn" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#484848] transition-colors hover:border-accent hover:text-accent"><Linkedin size={17}/></a><a href="#contact" className="inline-flex items-center gap-2 rounded-full border border-[#484848] px-5 py-3 text-xs font-bold transition-colors hover:border-accent hover:text-accent">Let&apos;s talk <ArrowUpRight size={15} /></a></div>
+          <button type="button" aria-expanded={menuOpen} aria-controls="mobile-menu" aria-label={menuOpen ? "Close navigation" : "Open navigation"} className="rounded-md border border-line p-2 md:hidden" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={23}/> : <Menu size={23}/>}</button>
+        </nav>
+        {menuOpen && <div id="mobile-menu" className="page-container flex flex-col gap-1 border-t border-line py-3 md:hidden">{[["Work", "#work"], ["About", "#about"], ["Expertise", "#services"], ["Contact", "#contact"]].map(([text,href]) => <a key={href} className="rounded-lg px-2 py-3 text-sm font-semibold hover:bg-[#1c1c1c]" href={href} onClick={() => setMenuOpen(false)}>{text}</a>)}<a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg px-2 py-3 text-sm font-semibold text-accent"><Linkedin size={17}/> LinkedIn <ArrowUpRight size={15}/></a></div>}
+      </header>
+
+      <main id="top">
+        <section className="relative overflow-hidden pb-16 pt-16 md:pb-24 md:pt-24 xl:pt-32">
+          <div className="pointer-events-none absolute -right-72 top-0 h-[800px] w-[800px] rounded-full glow opacity-40" />
+          <div className="page-container relative">
+            <Reveal className="mb-8 flex flex-wrap items-center justify-between gap-4 md:mb-12"><span className="eyebrow flex items-center gap-3 text-[#bebebe]"><span className="h-[7px] w-[7px] rounded-full bg-accent"/>THE WORK OF A CURIOUS MIND</span><span className="eyebrow text-[#6b6b6b]">MULTAN, PAKISTAN · 30°N / 71°E</span></Reveal>
+            <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)] lg:gap-12">
+              <div className="relative z-10">
+                <motion.div initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .9, ease: [0.22,1,0.36,1] }}>
+                  <h1 className="display text-[clamp(68px,8.7vw,147px)]"><span className="block">FAMIYA</span><span className="mt-2 block">ZANAIB<span className="text-accent">.</span></span></h1>
+                </motion.div>
+                <Reveal className="mt-10 max-w-[590px] lg:mt-12"><p className="eyebrow mb-4 text-accent">CONTENT STRATEGIST · WRITER · EDITOR</p><p className="text-[15px] leading-[1.85] text-[#b4b4b4] md:text-[17px]">Results-driven Content Writer, SEO Strategist and Short-form Video Editor with <strong className="font-semibold text-white">3+ years of experience</strong> delivering <strong className="font-semibold text-white">1,000+ high-quality articles</strong> and digital content that connects.</p><p className="mt-5 text-[13px] leading-[1.8] text-[#8f8f8f]">BBA Banking &amp; Finance Scholar (CGPA 3.67) · First Female Vice President, IBF Society</p></Reveal>
+                <Reveal delay={.12} className="mt-8"><div className="flex flex-wrap gap-3"><a href="#work" className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-4 text-[12px] font-bold uppercase tracking-[.07em] text-black transition-colors hover:bg-accent">Explore my work <ArrowDownRight size={17} className="transition-transform group-hover:translate-x-1 group-hover:translate-y-1" /></a><a href="#contact" className="group inline-flex items-center gap-3 rounded-full border border-[#464646] px-6 py-4 text-[12px] font-bold uppercase tracking-[.07em] transition-colors hover:border-white">Get in touch <ArrowUpRight size={17} /></a><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 rounded-full px-3 py-4 text-[12px] font-bold uppercase tracking-[.07em] text-accent hover:text-white"><Linkedin size={17}/> LinkedIn <ArrowUpRight size={15}/></a></div></Reveal>
+              </div>
+              <Reveal delay={.18} className="relative min-w-0"><CursorAvatar /></Reveal>
+            </div>
+            <Reveal className="mt-16 grid grid-cols-2 gap-3 md:mt-24 md:grid-cols-4 md:gap-4">
+              {[["1,000+", "ARTICLES WRITTEN"], ["3+", "YEARS OF EXPERIENCE"], ["3.67", "BBA CGPA"], ["20+", "TEAM MEMBERS LED"]].map(([value,label]) => <div key={label} className="rounded-[16px] border border-line bg-[#121212] px-5 py-6 md:px-7 md:py-8"><p className="text-[clamp(38px,4vw,64px)] font-black leading-none tracking-[-.085em]">{value}</p><p className="eyebrow mt-4 text-[#868686]">{label}</p></div>)}
+            </Reveal>
+            <div className="mt-10 flex items-center gap-3 text-xs tracking-wide text-[#777]"><ArrowDownRight size={17} /><span>SCROLL TO EXPLORE</span><span className="ml-auto text-accent">01 — 05</span></div>
+          </div>
+        </section>
+
+        <div className="marquee border-y border-line bg-[#111] py-4" aria-hidden="true"><div className="marquee-track">{Array.from({length: 4}).flatMap((_,i) => ["WORDS THAT WORK", "✳", "STORIES THAT STAY", "✳", "IDEAS INTO IMPACT", "✳"].map((item,j) => <span key={`${i}-${j}`} className={`text-[12px] font-black tracking-[.12em] ${item === "✳" ? "text-accent" : "text-[#b1b1b1]"}`}>{item}</span>))}</div></div>
+
+        <section id="services" className="page-container pb-24 pt-24 md:pb-32 md:pt-32">
+          <SectionTop number="01" label="WHAT I DO" right="THE THINGS I CARE ABOUT DOING WELL" />
+          <Reveal className="my-10 flex flex-col justify-between gap-6 md:my-14 md:flex-row md:items-end"><h2 className="section-title max-w-3xl text-[clamp(51px,7vw,99px)]">A little bit of<br/><span className="text-accent">everything.</span> A lot<br/>of intention.</h2><p className="max-w-[250px] text-sm leading-[1.7] text-[#999]">Three disciplines. One common thread: thoughtful work that actually moves things forward.</p></Reveal>
+          <div className="grid gap-4 md:grid-cols-3">
+            {services.map((s, index) => <Reveal key={s.number} delay={index*.08}><article className="interactive-card flex h-full min-h-[365px] flex-col rounded-[20px] border border-line bg-panel p-7 md:min-h-[410px] md:p-8"><div className="flex items-start justify-between"><span className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#383838] bg-[#181818]"><s.icon size={23} className="text-accent" strokeWidth={1.7}/></span><span className="eyebrow text-[#777]">/{s.number}</span></div><h3 className="mt-16 whitespace-pre-line text-[30px] font-bold leading-[1.1] tracking-[-.065em] lg:text-[36px]">{s.title}</h3><p className="mt-4 text-[13px] leading-[1.85] text-[#a3a3a3]">{s.text}</p><div className="mt-auto flex flex-wrap gap-2 pt-7">{s.tags.map(tag => <span key={tag} className="rounded-full border border-[#353535] px-2.5 py-1.5 text-[9px] font-bold tracking-[.065em] text-[#9c9c9c]">{tag}</span>)}</div></article></Reveal>)}
+          </div>
+        </section>
+
+        <section id="work" className="border-t border-line bg-[#0d0d0d] pb-24 pt-8 md:pb-32 md:pt-10">
+          <div className="page-container">
+            <SectionTop number="02" label="SELECTED WORK / EXPERIENCE" right="A TRACK RECORD, NOT JUST A TITLE" />
+            <Reveal className="mt-10 flex flex-col justify-between gap-5 md:mt-14 md:flex-row md:items-end"><h2 className="section-title text-[clamp(56px,8vw,112px)]">The proof<br/>is in the <span className="stroked">work.</span></h2><p className="max-w-[255px] text-sm leading-[1.8] text-[#a2a2a2]">A mix of words, visuals, leadership and precision — each with its own story.</p></Reveal>
+            <div className="my-10 flex flex-wrap gap-2" aria-label="Filter projects">{filters.map(filter => <button key={filter} type="button" aria-pressed={activeFilter === filter} onClick={() => setActiveFilter(filter)} className={`rounded-full border px-4 py-2.5 text-xs font-bold transition-all ${activeFilter === filter ? "border-accent bg-accent text-black" : "border-[#3a3a3a] text-[#b8b8b8] hover:border-[#a0a0a0] hover:text-white"}`}>{filter}</button>)}</div>
+            <div className="grid gap-4 md:grid-cols-2 md:gap-5">{filteredProjects.map(p => <ProjectCard key={p.number} project={p}/>)}</div>
+            <Reveal className="mt-8 flex items-center justify-between gap-4 border-b border-line pb-6 text-xs text-[#777]"><span>EVERY PROJECT IS A CHANCE TO MAKE SOMETHING MEANINGFUL.</span><span>{String(filteredProjects.length).padStart(2,"0")} PROJECTS</span></Reveal>
+          </div>
+        </section>
+
+        <section id="about" className="page-container pb-24 pt-24 md:pb-32 md:pt-32">
+          <SectionTop number="03" label="BEHIND THE WORK" right="A FEW THINGS WORTH KNOWING" />
+          <div className="mt-10 grid gap-10 md:mt-16 md:grid-cols-[1fr_1fr] md:gap-20">
+            <Reveal><div className="relative overflow-hidden rounded-[24px] border border-line bg-[#161616] p-8 md:min-h-[540px] md:p-10"><div className="absolute right-0 top-0 h-80 w-80 glow"/><span className="eyebrow relative text-accent">HELLO, I&apos;M FAMIYA.</span><p className="relative mt-10 text-[clamp(35px,4.15vw,60px)] font-black leading-[1.08] tracking-[-.065em]">I believe good ideas deserve <span className="text-accent">great execution.</span></p><p className="relative mt-8 max-w-md text-[14px] leading-[1.9] text-[#aaa]">I&apos;m a BBA Banking & Finance scholar, content specialist and first female Vice President of the IBF Society at Bahauddin Zakariya University. My work moves between search strategy, editing timelines, event floors and financial detail — always with curiosity at the center.</p><div className="relative mt-12 flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#555] bg-accent text-sm font-black text-ink">FZ</span><div><span className="block text-xs font-bold">Famiya Zanaib</span><span className="mt-1 block text-[11px] text-[#888]">Writer. Creator. Leader.</span></div></div></div></Reveal>
+            <Reveal delay={.1}><div><h2 className="section-title text-[clamp(48px,5.7vw,78px)]">Quick facts<span className="text-accent">.</span></h2><p className="mb-9 mt-4 max-w-md text-sm leading-[1.7] text-[#999]">The facts behind the person — a few coordinates on the map.</p><dl className="border-t border-line">{[
+              ["LOCATION", "Multan, Pakistan"],
+              ["EDUCATION", "BBA Banking & Finance", "Bahauddin Zakariya University · CGPA 3.67"],
+              ["CURRENT ROLES", "Content Creator & Vice President", "IBF Society · Short-form media"],
+              ["LANGUAGES", "Urdu · English", "Chinese & Arabic (Conversational)"],
+              ["EMAIL", EMAIL],
+              ["LINKEDIN", "View LinkedIn profile"],
+            ].map(([label, value, extra]) => <div key={label} className="grid grid-cols-[110px_1fr] gap-4 border-b border-line py-5 md:grid-cols-[130px_1fr]"><dt className="eyebrow pt-[4px] text-[#777]">{label}</dt><dd>{label === "LINKEDIN" ? <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-[14px] font-semibold text-accent hover:underline md:text-[16px]">{value}<ArrowUpRight size={16}/></a> : <span className="block text-[14px] font-semibold leading-relaxed md:text-[16px]">{value}</span>}{extra && <span className="mt-1 block text-xs leading-[1.6] text-[#888]">{extra}</span>}</dd></div>)}</dl><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"><Linkedin size={17}/>Connect with Famiya on LinkedIn <MoveUpRight size={16}/></a></div></Reveal>
+          </div>
+        </section>
+
+        <section className="overflow-hidden border-y border-line bg-accent py-10 text-ink md:py-16"><div className="page-container flex flex-col items-start justify-between gap-6 md:flex-row md:items-center"><p className="section-title text-[clamp(46px,6vw,85px)]">YOUR IDEA. <span className="opacity-60">MY NEXT</span><br/>OBSESSION.</p><a href="#contact" className="group inline-flex items-center gap-3 rounded-full bg-ink px-6 py-4 text-xs font-bold uppercase tracking-[.09em] text-white transition-colors hover:bg-[#333]">Let&apos;s build it <ArrowUpRight className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" size={17}/></a></div></section>
+
+        <section id="contact" className="page-container pb-28 pt-24 md:pb-36 md:pt-32">
+          <SectionTop number="04" label="LET'S CONNECT" right="YOUR NEXT GREAT PROJECT STARTS HERE" />
+          <div className="mt-12 grid gap-14 md:mt-16 md:grid-cols-[1fr_1fr] md:gap-20">
+            <Reveal><div><p className="eyebrow mb-6 text-accent">GOT SOMETHING IN MIND?</p><h2 className="section-title max-w-[640px] text-[clamp(51px,6.2vw,89px)]">Give me any<br/>concept, and<br/>I&apos;ll turn it into<br/><span className="text-accent">content that<br/>converts.</span></h2><p className="mt-9 max-w-md text-[15px] leading-[1.85] text-[#a7a7a7]">A quick brief, a half-formed idea or an ambitious launch — tell me what you&apos;re imagining. We&apos;ll start there.</p><div className="mt-10 flex flex-wrap items-center gap-3"><button type="button" onClick={handleCopy} className="group inline-flex items-center gap-3 rounded-full border border-[#464646] px-5 py-3.5 text-xs font-bold transition-colors hover:border-accent hover:text-accent">{copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? "Email copied!" : "Copy email"}</button><a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-2 text-[13px] text-[#aaa] hover:text-white">{EMAIL} <ArrowUpRight size={15}/></a></div><div className="mt-12 flex items-center gap-4 text-[#a5a5a5]"><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="flex h-11 w-11 items-center justify-center rounded-full border border-line transition-colors hover:border-accent hover:text-accent"><Linkedin size={18}/></a><a href={`mailto:${EMAIL}`} aria-label="Email" className="flex h-11 w-11 items-center justify-center rounded-full border border-line transition-colors hover:border-accent hover:text-accent"><Mail size={18}/></a><span className="eyebrow ml-2 text-[#6f6f6f]">LET&apos;S MAKE IT HAPPEN</span></div></div></Reveal>
+            <Reveal delay={.13}><div className="rounded-[22px] border border-line bg-panel p-6 md:p-9"><div className="mb-8 flex items-center justify-between border-b border-line pb-6"><div><span className="eyebrow text-accent">PROJECT INQUIRY</span><h3 className="mt-2 text-2xl font-bold tracking-[-.04em]">Tell me your idea.</h3></div><span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#383838]"><ArrowUpRight size={23}/></span></div><ContactForm/></div></Reveal>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-line bg-[#101010]"><div className="page-container pt-12"><div className="flex flex-col items-start justify-between gap-7 border-b border-line pb-12 md:flex-row md:items-end"><div><a href="#top" className="text-[clamp(48px,8vw,110px)] font-black leading-[.85] tracking-[-.08em]">FAMIYA ZANAIB<span className="text-accent">.</span></a><p className="mt-5 text-xs tracking-wide text-[#999]">WORDS THAT WORK. STORIES THAT STAY.</p></div><a href="#top" className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-3 text-xs font-bold hover:border-accent hover:text-accent">Back to top <ArrowUpRight size={16}/></a></div><div className="flex flex-col justify-between gap-5 py-7 text-xs text-[#777] md:flex-row md:items-center"><p>© {new Date().getFullYear()} Famiya Zanaib. Built with intention.</p><div className="flex flex-wrap gap-6"><a href="#work" className="hover:text-white">Work</a><a href="#about" className="hover:text-white">About</a><a href="#contact" className="hover:text-white">Contact</a><a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-white">LinkedIn ↗</a><a href={`mailto:${EMAIL}`} className="hover:text-white">Email ↗</a></div><span>MULTAN, PK · WORLDWIDE ONLINE</span></div></div></footer>
+    </div>
+  );
 }
