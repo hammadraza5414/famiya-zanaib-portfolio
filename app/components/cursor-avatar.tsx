@@ -18,7 +18,7 @@ export default function CursorAvatar() {
   const floatY = useSpring(useTransform(mouseY, [-1, 1], [-8, 8]), smooth);
   const glowX = useSpring(useTransform(mouseX, [-1, 1], [38, 62]), smooth);
   const glowY = useSpring(useTransform(mouseY, [-1, 1], [30, 56]), smooth);
-  const backgroundGlow = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(206,247,123,.22), transparent 32%), linear-gradient(145deg,#222b23 3%,#121613 50%,#121212 100%)`;
+  const backgroundGlow = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, rgba(143,174,145,.26), transparent 32%), linear-gradient(145deg,#567462 3%,#344F43 50%,#243E33 100%)`;
 
   function move(event: PointerEvent<HTMLDivElement>) {
     if (reducedMotion || event.pointerType === "touch") return;
@@ -40,7 +40,7 @@ export default function CursorAvatar() {
         onPointerMove={move}
         onPointerLeave={reset}
         style={reducedMotion ? undefined : { rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="avatar-card relative isolate aspect-[0.93] overflow-hidden rounded-[30px] border border-[#42483b] bg-[#131712] shadow-[0_24px_85px_rgba(0,0,0,.36)] md:rounded-[36px]"
+        className="avatar-card relative isolate aspect-[0.93] overflow-hidden rounded-[30px] border border-[#819D86] bg-[#3D5948] shadow-[0_24px_85px_rgba(0,0,0,.36)] md:rounded-[36px]"
       >
         <motion.div
           aria-hidden="true"
@@ -48,8 +48,8 @@ export default function CursorAvatar() {
           style={reducedMotion ? undefined : { background: backgroundGlow }}
         />
         <div className="avatar-grid pointer-events-none absolute inset-0 opacity-30" />
-        <span className="pointer-events-none absolute left-6 top-6 z-20 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 px-3 py-2 text-[9px] font-bold uppercase tracking-[.17em] text-white/80 backdrop-blur md:left-8 md:top-8"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />PORTFOLIO AVATAR</span>
-        <span className="pointer-events-none absolute right-6 top-6 z-20 text-[11px] font-bold tracking-[.17em] text-accent/75">FZ / 26</span>
+        <span className="pointer-events-none absolute left-6 top-6 z-20 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/30 px-3 py-2 text-[9px] font-bold uppercase tracking-[.17em] text-white/80 backdrop-blur md:left-8 md:top-8"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#E5EAD7]" />PORTFOLIO AVATAR</span>
+        <span className="pointer-events-none absolute right-6 top-6 z-20 text-[11px] font-bold tracking-[.17em] text-[#E7E8CF]">FZ / 26</span>
         <motion.div
           style={reducedMotion ? undefined : { x: floatX, y: floatY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-center p-5 md:p-6"
@@ -67,13 +67,13 @@ export default function CursorAvatar() {
             <div className="absolute inset-0 ring-1 ring-inset ring-white/8" />
           </div>
         </motion.div>
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#121512] via-[#121512]/55 to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#254234] via-[#254234]/55 to-transparent" />
         <div className="pointer-events-none absolute bottom-7 left-7 right-7 z-20 flex items-end justify-between gap-4 md:bottom-9 md:left-9 md:right-9">
           <div>
-            <div className="eyebrow text-accent">01 / MEET THE CREATIVE</div>
+            <div className="eyebrow text-[#E8E8D7]">01 / MEET THE CREATIVE</div>
             <p className="mt-2 text-2xl font-black leading-none tracking-[-.065em] text-white md:text-3xl">Content with presence.</p>
           </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-accent/50 text-accent shadow-[0_0_24px_rgba(206,247,123,.15)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E2E9D8]/50 text-[#E8E8D7] shadow-[0_0_24px_rgba(148,171,145,.24)]">
             <Sparkles size={18} />
           </div>
         </div>

@@ -3,7 +3,7 @@ const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
-      colors: { ink: "#0a0a0a", panel: "#111111", line: "#262626", fog: "#a3a3a3", accent: "#d7ff68" },
+      colors: { ink: "#263C30", panel: "#FFFBF4", line: "#CCD4C7", fog: "#586D5E", accent: "#526B59" },
       fontFamily: { sans: ["Arial", "Helvetica", "sans-serif"] }
     }
   },
