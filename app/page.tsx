@@ -167,27 +167,59 @@ function ContactForm() {
   const [email, setEmail] = useState("");
   const [projectType, setProjectType] = useState("");
   const [message, setMessage] = useState("");
-  const [opened, setOpened] = useState(false);
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const [website, setWebsite] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{ kind: "success" | "warning" | "error"; message: string } | null>(null);
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const subject = `Portfolio enquiry: ${projectType} — ${name}`;
-    const body = `Hi Famiya,\n\n${message}\n\nProject type: ${projectType}\nName: ${name}\nReply to: ${email}`;
-    const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
-    window.location.href = mailto;
+    if (submitting) return;
+    setSubmitting(true);
+    setFeedback(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, projectType, message, website })
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.saved) {
+        setFeedback({ kind: "error", message: result.error || "Sorry, your message couldn't be saved. Please try again or contact Famiya by email." });
+        return;
+      }
+
+      setFeedback(result.notificationSent
+        ? { kind: "success", message: "Your inquiry has been received! Famiya has been notified by email." }
+        : { kind: "warning", message: "Your inquiry has been saved, but the email notification is pending. Famiya can find your message in the submissions database." });
+      setName("");
+      setEmail("");
+      setProjectType("");
+      setMessage("");
+      setWebsite("");
+    } catch {
+      setFeedback({ kind: "error", message: "We couldn't connect to the submissions service. Please try again or email Famiya directly." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <form onSubmit={submit} className="space-y-5" aria-label="Project enquiry form">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div><label htmlFor="name" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Your name *</label><input id="name" name="name" className="input-field" autoComplete="name" required maxLength={100} placeholder="How should I call you?" value={name} onChange={(e) => setName(e.target.value)} /></div>
-        <div><label htmlFor="email" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Email address *</label><input id="email" name="email" type="email" className="input-field" autoComplete="email" required maxLength={200} placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+      <div className="absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="website">Leave this field empty</label>
+        <input id="website" name="website" type="text" autoComplete="off" tabIndex={-1} value={website} onChange={(e) => setWebsite(e.target.value)} />
       </div>
-      <div><label htmlFor="projectType" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Project type *</label><div className="relative"><select id="projectType" name="projectType" className="input-field appearance-none" required value={projectType} onChange={(e) => setProjectType(e.target.value)}><option value="" disabled>Select what you have in mind</option><option>SEO Content & Writing</option><option>Video Editing & Reels</option><option>Content Strategy</option><option>Event & Leadership Collaboration</option><option>Something Else</option></select><ChevronDown size={18} className="pointer-events-none absolute right-4 top-[18px] text-fog" /></div></div>
-      <div><label htmlFor="message" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Tell me about it *</label><textarea id="message" name="message" className="input-field min-h-[150px] resize-y" required minLength={10} maxLength={4000} placeholder="The big idea, the tiny details, your wildest brief…" value={message} onChange={(e) => setMessage(e.target.value)} /></div>
-      <button type="submit" className="group flex w-full items-center justify-between rounded-xl bg-accent px-6 py-5 text-sm font-black uppercase tracking-[.1em] text-[#FBF7EE] transition-colors hover:bg-[#59735E]"><span>Start the conversation</span><Send size={19} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></button>
-      {opened && <p role="status" className="text-sm leading-relaxed text-accent">Your email app should open with a prepared message. Please press Send there to deliver your enquiry.</p>}
-      <p className="text-xs leading-relaxed text-[#586D5E]">This form opens your email application; it doesn’t send or store your details on this website.</p>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div><label htmlFor="name" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Your name *</label><input id="name" name="name" className="input-field" autoComplete="name" required minLength={2} maxLength={100} placeholder="How should I call you?" value={name} onChange={(e) => setName(e.target.value)} disabled={submitting} /></div>
+        <div><label htmlFor="email" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Email address *</label><input id="email" name="email" type="email" className="input-field" autoComplete="email" required maxLength={254} placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={submitting} /></div>
+      </div>
+      <div><label htmlFor="projectType" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Project type *</label><div className="relative"><select id="projectType" name="projectType" className="input-field appearance-none" required value={projectType} onChange={(e) => setProjectType(e.target.value)} disabled={submitting}><option value="" disabled>Select what you have in mind</option><option>SEO Content & Writing</option><option>Video Editing & Reels</option><option>Content Strategy</option><option>Event & Leadership Collaboration</option><option>Something Else</option></select><ChevronDown size={18} className="pointer-events-none absolute right-4 top-[18px] text-fog" /></div></div>
+      <div><label htmlFor="message" className="mb-2 block text-[12px] font-bold uppercase tracking-[.13em] text-[#586D5E]">Tell me about it *</label><textarea id="message" name="message" className="input-field min-h-[150px] resize-y" required minLength={10} maxLength={4000} placeholder="The big idea, the tiny details, your wildest brief…" value={message} onChange={(e) => setMessage(e.target.value)} disabled={submitting} /></div>
+      <button type="submit" disabled={submitting} aria-busy={submitting} className="group flex w-full items-center justify-between rounded-xl bg-accent px-6 py-5 text-sm font-black uppercase tracking-[.1em] text-[#FBF7EE] transition-colors hover:bg-[#59735E] disabled:cursor-wait disabled:opacity-65"><span>{submitting ? "Sending your inquiry…" : "Send project inquiry"}</span><Send size={19} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></button>
+      {feedback && <p role={feedback.kind === "error" ? "alert" : "status"} className={"rounded-lg border px-4 py-3 text-sm leading-relaxed " + (feedback.kind === "success" ? "border-[#9CB5A0] bg-[#E4EEDF] text-[#284B36]" : feedback.kind === "warning" ? "border-[#D7BD8B] bg-[#FBF1DB] text-[#70551A]" : "border-[#CD9B94] bg-[#FCEBE7] text-[#8B332D]")}>{feedback.message}{feedback.kind === "error" && <> <a href={"mailto:" + EMAIL} className="font-semibold underline">Email Famiya directly</a>.</>}</p>}
+      <p className="text-xs leading-relaxed text-[#586D5E]">Inquiries are stored privately to respond to your project request. We do not sell your information. <a href="/privacy" className="underline underline-offset-2 hover:text-[#263C30]">How your information is handled</a>.</p>
     </form>
   );
 }

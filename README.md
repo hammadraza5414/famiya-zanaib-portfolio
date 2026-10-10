@@ -1,34 +1,48 @@
 # Famiya Zanaib — Portfolio
 
-An editorial, responsive dark portfolio for Famiya Zanaib built with Next.js App Router, React, TypeScript, Tailwind CSS, Framer Motion and Lucide icons.
+Next.js 15, React 19, Tailwind CSS, Framer Motion. Responsive beige-and-dusky-green design, supplied portrait avatar with cursor tilt, LinkedIn and accessible contact form.
 
-## Run locally
+## Development
 
-```bash
-npm install
-npm run dev
-```
+    npm install
+    npm run dev
+    npm run typecheck
 
-Open http://localhost:3000. For production, run `npm run build && npm start`.
+## Secure inquiry submission setup
 
-## Deploy to Vercel
+The contact form POSTs to /api/contact. Messages are only considered saved after a Supabase database insert succeeds. Once Resend is set up, a notification is sent to zanaibfamiya@gmail.com. An email failure does not delete a stored inquiry; its status remains pending/failed in the database.
 
-Import this repository into Vercel as a **Next.js** project. No environment variables are needed. Vercel builds automatically on every push to `main` when connected to GitHub.
+1. Create a Supabase project, open its SQL Editor, and execute supabase/portfolio_inquiries.sql.
+2. In Vercel -> famiya-zanaib-portfolio -> Settings -> Environment Variables set:
+   - SUPABASE_URL: your Supabase project URL
+   - SUPABASE_SECRET_KEY: secret server key (sb_secret_...; do not use the publishable/anon key)
+   - RESEND_API_KEY: Resend API key
+   - RESEND_FROM_EMAIL: e.g. Famiya Portfolio <contact@your-verified-domain.com>
+3. In Resend, verify the domain used by RESEND_FROM_EMAIL before sending to Famiya's Gmail address.
+4. Deploy to **Production** after setting the environment variables.
+5. Submit a test enquiry and verify the new row in Supabase Table Editor -> portfolio_inquiries and delivery in Famiya's inbox.
 
-## Contact form behavior
+Never paste secrets into GitHub or the client-side application. Vercel environment values must have **Production** target selected (optionally Preview and Development too).
 
-The contact form validates required fields and opens the visitor's email client with a prefilled message addressed to `zanaibfamiya@gmail.com`. It **does not silently send email or store personal information**. The "Copy email" button uses the Clipboard API; LinkedIn links point to Famiya's public professional profile; there are no phone or Instagram contact buttons.
+If Supabase variables are missing, the form returns a clear configuration message rather than pretending the inquiry was delivered. If Resend isn't configured, the inquiry is stored but the page warns that email notification is pending.
 
-For inbox delivery entirely within the site, add an email delivery backend (such as a server action with a configured email provider and anti-spam protections).
+## Security and spam controls
 
-## Customization
+- Secrets and the destination mailbox are used server-side only.
+- Validates all fields on the server and limits request size.
+- Checks request origin, includes a honeypot, and limits to 5 inquiries/hour per one-way IP hash in the database.
+- RLS is enabled with no public permissions/policies. Browser users cannot query submitted data.
+- The public API never returns sensitive provider errors, credentials, or submitted lead details.
 
-All project content, service descriptions, metrics and links are defined near the top of `app/page.tsx`. Main theme colors live in `tailwind.config.ts` and `app/globals.css`.
+## Viewing inquiries
 
-## Accessibility
+Go to your Supabase project > Table Editor > portfolio_inquiries.
+The notification_status column indicates sent, pending, or failed. Clicking Reply in the email notification replies to the visitor.
 
-Includes semantic headings, labeled form fields, focus outlines, mobile menu state, alt-free decorative graphics, responsive spacing and reduced-motion fallbacks.
+## Data protection
 
-## Interactive hero illustration
+See /privacy for visitors' privacy notice. Retention/deletion requests should be managed in Supabase by the site owner.
 
-The original, non-photographic girl avatar in `app/components/cursor-avatar.tsx` tilts with the mouse and turns her pupils towards the cursor via Framer Motion springs. On touch devices it stays centered, and reduced-motion preferences are respected. It is an original stylized illustration, not a claim to depict Famiya’s real likeness.
+## Changing content
+
+Project information and services live in app/page.tsx; colors are in tailwind.config.ts and app/globals.css.
