@@ -46,3 +46,14 @@ See /privacy for visitors' privacy notice. Retention/deletion requests should be
 ## Changing content
 
 Project information and services live in app/page.tsx; colors are in tailwind.config.ts and app/globals.css.
+
+## Portfolio content order (2026)
+
+1. Events By Ussss — co-founder highlight
+2. Digital marketing — content creation, lead generation, cold calling, email marketing
+3. SEO article writing — 1,000+ articles across 10+ industries
+4. About and contact
+
+## Form configuration note
+
+If SUPABASE_SECRET_KEY is absent or the database is unavailable, the form cannot store inquiries. The form shows a clear warning and offers a prefilled email draft; the visitor must press Send in their email application. Do not treat opening a draft as a sent inquiry.

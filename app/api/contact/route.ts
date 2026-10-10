@@ -6,6 +6,13 @@ export const dynamic = "force-dynamic";
 
 const notificationEmail = "zanaibfamiya@gmail.com";
 const validTypes = new Set([
+  "Event Planning & Collaborations",
+  "Digital Marketing Strategy",
+  "Lead Generation",
+  "Cold Calling & Outreach",
+  "Email Marketing",
+  "Social Content & Video",
+  "SEO Articles & Writing",
   "SEO Content & Writing",
   "Video Editing & Reels",
   "Content Strategy",
