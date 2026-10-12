@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: { title: "Famiya Zanaib — Events, marketing, content that connects.", description: "Events By Ussss, digital marketing, lead generation, email campaigns, content creation and SEO writing.", type: "website", images: [{ url: "/og-image.svg", width: 1200, height: 630 }] },
   robots: { index: true, follow: true }
 };
-export const viewport: Viewport = { themeColor: "#0a0a0a" };
+export const viewport: Viewport = { themeColor: "#F2EADD" };
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return <html lang="en"><body>{children}</body></html>;
 }

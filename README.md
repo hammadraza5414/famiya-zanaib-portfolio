@@ -57,3 +57,11 @@ Project information and services live in app/page.tsx; colors are in tailwind.co
 ## Form configuration note
 
 If SUPABASE_SECRET_KEY is absent or the database is unavailable, the form cannot store inquiries. The form shows a clear warning and offers a prefilled email draft; the visitor must press Send in their email application. Do not treat opening a draft as a sent inquiry.
+
+## Social profiles
+
+- LinkedIn: https://www.linkedin.com/in/famiya-zanaib-03156b366/
+- Famiya Instagram: https://www.instagram.com/famiyazanaib/
+- Short-form content Instagram (@hehe_ussss): https://www.instagram.com/hehe_ussss/
+
+Famiya's Instagram is linked wherever LinkedIn appears in the interface. The creator profile is linked in the marketing/content-creation showcase, About quick facts, and footer.
